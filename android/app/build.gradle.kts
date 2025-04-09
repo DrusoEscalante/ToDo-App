@@ -1,10 +1,21 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
+    id("com.google.gms.google-services")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
-}
 
+}
+dependencies {
+    // Import the Firebase BoM
+    implementation(platform("com.google.firebase:firebase-bom:33.12.0"))
+
+    // Firebase Analytics
+    implementation("com.google.firebase:firebase-analytics")
+
+    // Firebase Firestore
+    implementation("com.google.firebase:firebase-firestore")
+}
 android {
     namespace = "com.example.schoolflutter"
     compileSdk = flutter.compileSdkVersion
@@ -38,6 +49,18 @@ android {
         }
     }
 }
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath("com.google.gms:google-services:4.4.2")
+
+    }
+}
+
 
 flutter {
     source = "../.."

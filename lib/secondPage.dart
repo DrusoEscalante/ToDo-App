@@ -19,10 +19,10 @@ class secondPage extends StatefulWidget {
 
 class _secondPage extends State<secondPage> {
   final List<Task> _tasks = [];
-
+  final Uuid uuid = Uuid();
   void _createCard() {
     setState(() {
-      String taskId = Uuid().v4();
+      String taskId = uuid.v4();
       _tasks.add(
         Task(
           id: taskId,
