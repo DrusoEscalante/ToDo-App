@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
-import 'landingPage.dart';
+import 'package:uuid/uuid.dart';
+
+class Task {
+  final String id;
+  final Widget widget;
+
+  Task({required this.id, required this.widget});
+}
 
 class secondPage extends StatefulWidget {
   const secondPage({super.key, required this.title});
@@ -11,33 +18,31 @@ class secondPage extends StatefulWidget {
 }
 
 class _secondPage extends State<secondPage> {
-  final List<Widget> _tasks = [];
+  final List<Task> _tasks = [];
 
   void _createCard() {
     setState(() {
+      String taskId = Uuid().v4();
       _tasks.add(
-        Card(
-          color: Colors.grey,
-          elevation: 10,
-          margin: EdgeInsets.all(10),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              style: TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                hintText: "Enter Task",
-                hintStyle: TextStyle(color: Colors.white),
+        Task(
+          id: taskId,
+          widget: Card(
+            color: Colors.red,
+            elevation: 10,
+            margin: EdgeInsets.all(20.0),
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: TextField(
+                style: TextStyle(color: Colors.black87),
+                decoration: InputDecoration(
+                  hintStyle: TextStyle(color: Colors.black87),
+                  hintText: "Enter Task",
+                ),
               ),
             ),
           ),
         ),
       );
-    });
-  }
-
-  void _deleteCard(int index) {
-    setState(() {
-      _tasks.removeAt(index);
     });
   }
 
@@ -57,41 +62,23 @@ class _secondPage extends State<secondPage> {
         backgroundColor: Colors.black87,
         title: Text("Todo List", style: TextStyle(color: Colors.white)),
       ),
-      body: Container(
-        child:
-            _tasks.isEmpty
-                ? Center(child: Text("No current tasks!"))
-                : ListView.builder(
-                  itemCount: _tasks.length,
-                  itemBuilder: (context, index) {
-                    return Dismissible(key:
-                        Key('$index'),
-                      onDismissed: (direction){
-                      _deleteCard(index);
-                      },
-                      direction: DismissDirection.startToEnd,
-                      child: _tasks[index],
-                      );
-                  },
-                ),
+      body: _tasks.isEmpty
+          ? Center(child: Text("No current tasks!"))
+          : ListView.builder(
+        itemCount: _tasks.length,
+        itemBuilder: (context, index) {
+          final item = _tasks[index];
+          return Dismissible(
+            key: Key(item.id),
+            onDismissed: (direction) {
+              setState(() {
+                _tasks.removeAt(index);
+              });
+            },
+            child: item.widget,
+          );
+        },
       ),
-
     );
   }
-}
-
-Route _firstRoute() {
-  return PageRouteBuilder(
-    pageBuilder:
-        (context, animation, secondaryAnimation) => const landingPage(),
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      const begin = Offset(0.0, 1.0);
-      const end = Offset.zero;
-      const curve = Curves.ease;
-
-      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-      return SlideTransition(position: animation.drive(tween), child: child);
-    },
-  );
 }
